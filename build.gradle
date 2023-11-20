@@ -1,0 +1,53 @@
+plugins {
+    id 'java'
+    id 'groovy'
+    id 'idea'
+}
+
+repositories {
+    mavenCentral()
+}
+
+allprojects {
+    group = 'com.yourcompany'
+    version = '1.0-SNAPSHOT'
+
+    tasks.withType(JavaCompile).tap {
+        configureEach {
+            options.encoding = 'UTF-8'
+        }
+    }
+}
+
+test {
+    useJUnitPlatform()
+
+    doFirst {
+        delete "build"
+    }
+}
+
+clean {
+    delete "build"
+}
+
+tasks.withType(Test).configureEach {
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+}
+
+dependencies {
+    testImplementation 'org.spockframework:spock-core:2.4-M1-groovy-4.0'
+    testImplementation 'cglib:cglib-nodep:3.3.0'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(11)
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs.addAll(["--release", "11"])
+}
